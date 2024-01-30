@@ -1,4 +1,77 @@
+turtles-own [
+  energy
+]
 
+breed [buffaloes buffalo]
+breed [hyenas hyena]
+
+to setup
+  clear-all
+  reset-ticks
+  create-buffaloes initial-number-buffalo [
+    set shape  "cow"
+    set color white
+    set size 1 ; easier to see
+    set energy random (2 * buffalo-gain-from-food)
+    set label energy
+    set label-color black
+    setxy random-xcor random-ycor
+  ]
+  create-hyenas initial-number-hyena [
+    set shape  "wolf"
+    set color black
+    set size 1; easier to see
+    set energy random (2 * hyena-gain-from-food)
+    set label energy
+    setxy random-xcor random-ycor
+  ]
+  ask patches [
+    set pcolor brown
+  ]
+  reset-ticks
+end
+
+to go
+  if not any? turtles [stop]
+  if ticks >= 500 [stop]
+  ask buffaloes [
+    move
+    ; eat-grass
+    starvation
+    set label energy
+    set label-color black
+  ]
+  ask hyenas [
+    move
+    eat-buffalo
+    starvation
+    set label energy
+    set label-color white
+  ]
+  tick
+end
+
+to move
+  ifelse coin-flip? [right random 50] [left random 50]
+  forward 1
+  set energy energy - 1
+end
+
+to eat-buffalo
+  let prey one-of buffaloes-here
+  if prey != nobody [
+    ask prey [die]
+    set energy energy + hyena-gain-from-food
+  ]
+end
+
+to-report coin-flip?
+  report random 2 = 0
+end
+
+to starvation
+  if energy = 0 [die]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 426
@@ -14,15 +87,15 @@ GRAPHICS-WINDOW
 1
 1
 0
-1
-1
+0
+0
 1
 -16
 16
 -16
 16
-0
-0
+1
+1
 1
 ticks
 30.0
@@ -36,7 +109,7 @@ initial-number-buffalo
 initial-number-buffalo
 0
 1000
-100.0
+459.0
 1
 1
 NIL
@@ -51,7 +124,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-100.0
+133.0
 1
 1
 NIL
@@ -96,7 +169,7 @@ BUTTON
 202
 go
 go
-NIL
+T
 1
 T
 OBSERVER
@@ -131,8 +204,8 @@ SLIDER
 272
 188
 305
-Buffalo-gain-from-food
-Buffalo-gain-from-food
+buffalo-gain-from-food
+buffalo-gain-from-food
 0
 100
 49.0
@@ -196,6 +269,28 @@ show-energy?
 1
 1
 -1000
+
+MONITOR
+75
+445
+175
+490
+NIL
+count buffaloes
+17
+1
+11
+
+MONITOR
+222
+445
+310
+490
+NIL
+count hyenas
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
