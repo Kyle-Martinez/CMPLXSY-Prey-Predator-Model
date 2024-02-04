@@ -72,6 +72,27 @@ end
 to starvation
   if energy = 0 [die]
 end
+
+
+; If ever we will do some packs or something with the hyenas,
+; this will divide the energy gained from the buffalo to all hyenas in the patch
+
+;to eat-buffalo
+;  ; Find a buffalo on the same patch as this hyena
+;  let prey one-of buffaloes-here
+;  if prey != nobody [
+;    ; Count the number of hyenas on the same patch
+;    let num-hyenas count hyenas-here
+;    ; Calculate the energy share for each hyena
+;    let energy-share hyena-gain-from-food / num-hyenas
+;    ; Distribute the energy to each hyena on the patch
+;    ask hyenas-here [
+;      set energy energy + energy-share
+;    ]
+;    ; Remove the buffalo from the simulation
+;    ask prey [ die ]
+;  ]
+;end
 @#$#@#$#@
 GRAPHICS-WINDOW
 426
