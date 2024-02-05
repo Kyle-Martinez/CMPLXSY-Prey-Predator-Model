@@ -1,5 +1,6 @@
 turtles-own [
   energy
+  repro-ctd
 ]
 
 breed [buffaloes buffalo]
@@ -16,6 +17,7 @@ to setup
     set label energy
     set label-color black
     setxy random-xcor random-ycor
+    set repro-ctd 0
   ]
   create-hyenas initial-number-hyena [
     set shape  "wolf"
@@ -24,6 +26,7 @@ to setup
     set energy random (2 * hyena-gain-from-food)
     set label energy
     setxy random-xcor random-ycor
+    set repro-ctd 0
   ]
   ask patches [
     set pcolor brown
@@ -39,6 +42,7 @@ to go
     ; eat-grass
     starvation
     set label energy
+    reproduce-buffalo
     set label-color black
   ]
   ask hyenas [
@@ -47,6 +51,7 @@ to go
     starvation
     set label energy
     set label-color white
+    reproduce-hyena
   ]
   tick
 end
@@ -73,6 +78,33 @@ to starvation
   if energy = 0 [die]
 end
 
+to reproduce-hyena
+  let hyena-repro-cd 16
+  if any? other hyenas in-radius 1 != 0 ;check if other hyena in radius
+  [
+    if energy > 10 [
+      if repro-ctd >= hyena-repro-cd and random 100 < 40 [ ;interval/cooldown & chance to reproduce
+        hatch 2 [ set repro-ctd 0 ]
+      set repro-ctd 0
+      set energy energy - 10]
+    ]
+  ]
+  set repro-ctd repro-ctd + 1
+end
+
+to reproduce-buffalo
+  let buff-repro-cd 24
+  if any? other buffaloes in-radius 1 != 0 ;check if other buffalo in radius
+  [
+    if energy > 10 [
+      if repro-ctd >= buff-repro-cd [ ;interval/cooldown & chance to reproduce
+        hatch 1 [ set repro-ctd 0 ]
+      set repro-ctd 0
+      set energy energy - 10]
+    ]
+  ]
+  set repro-ctd repro-ctd + 1
+end
 
 ; If ever we will do some packs or something with the hyenas,
 ; this will divide the energy gained from the buffalo to all hyenas in the patch
@@ -95,13 +127,13 @@ end
 ;end
 @#$#@#$#@
 GRAPHICS-WINDOW
-426
-10
+459
+43
 1194
 779
 -1
 -1
-23.03030303030303
+22.03030303030303
 1
 10
 1
@@ -130,7 +162,7 @@ initial-number-buffalo
 initial-number-buffalo
 0
 1000
-459.0
+101.0
 1
 1
 NIL
@@ -145,7 +177,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-133.0
+6.0
 1
 1
 NIL
@@ -259,7 +291,7 @@ hyena-gain-from-food
 hyena-gain-from-food
 0
 100
-50.0
+48.0
 1
 1
 NIL
@@ -274,7 +306,7 @@ hyena-reproduce
 hyena-reproduce
 0
 100
-50.0
+49.0
 1
 1
 NIL
@@ -312,6 +344,23 @@ count hyenas
 17
 1
 11
+
+BUTTON
+57
+167
+120
+200
+NIL
+go
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
