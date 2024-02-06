@@ -74,13 +74,7 @@ to setup-grass
     set regrowth-countdown random grass-regrowth-time
   ]
   ask patches [
-    ifelse regrowth-countdown < grass-regrowth-time
-    [
-      set pcolor brown
-    ]
-    [
-      set pcolor green
-    ]
+    set-patch-color
   ]
 end
 
@@ -91,13 +85,17 @@ to update-grass
     [
       set regrowth-countdown regrowth-countdown + 1
     ]
-    ifelse regrowth-countdown < grass-regrowth-time
-    [
-      set pcolor brown
-    ]
-    [
-      set pcolor green
-    ]
+    set-patch-color
+  ]
+end
+
+to set-patch-color
+  ifelse regrowth-countdown < grass-regrowth-time
+  [
+    set pcolor brown
+  ]
+  [
+    set pcolor green
   ]
 end
 

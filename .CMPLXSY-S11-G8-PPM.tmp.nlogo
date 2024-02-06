@@ -74,7 +74,7 @@ to setup-grass
     set regrowth-countdown random grass-regrowth-time
   ]
   ask patches [
-    ifelse regrowth-countdown < 50
+    ifelse regrowth-countdown < grass-regrowth-time
     [
       set pcolor brown
     ]
@@ -87,11 +87,11 @@ end
 to update-grass
   ask patches
   [
-    if regrowth-countdown < 50
+    if regrowth-countdown < grass-regrowth-time
     [
       set regrowth-countdown regrowth-countdown + 1
     ]
-    ifelse regrowth-countdown < 50
+    ifelse regrowth-countdown < grass-regrowth-time
     [
       set pcolor brown
     ]
@@ -101,7 +101,8 @@ to update-grass
   ]
 end
 
-to eat-grass ;temporary eat-grass function. replace when needed. used regrowth countdown instead of pcolor in checking
+
+to eat-grass ;temporary eat-grass function. replace when needed. used regrowth countdown instead of pcolor in checking if patch can be eaten
   if regrowth-countdown = grass-regrowth-time
   [
     set energy energy + buffalo-gain-from-food
@@ -213,7 +214,7 @@ initial-number-buffalo
 initial-number-buffalo
 0
 1000
-101.0
+302.0
 1
 1
 NIL
@@ -228,7 +229,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-0.0
+25.0
 1
 1
 NIL
@@ -243,7 +244,7 @@ grass-regrowth-time
 grass-regrowth-time
 0
 100
-50.0
+10.0
 1
 1
 NIL
@@ -312,7 +313,7 @@ buffalo-gain-from-food
 buffalo-gain-from-food
 0
 100
-10.0
+50.0
 1
 1
 NIL
@@ -327,7 +328,7 @@ buffalo-reporduce
 buffalo-reporduce
 0
 100
-1.0
+50.0
 1
 1
 NIL
@@ -342,7 +343,7 @@ hyena-gain-from-food
 hyena-gain-from-food
 0
 100
-48.0
+50.0
 1
 1
 NIL
@@ -357,7 +358,7 @@ hyena-reproduce
 hyena-reproduce
 0
 100
-0.0
+50.0
 1
 1
 NIL
@@ -370,7 +371,7 @@ SWITCH
 405
 show-energy?
 show-energy?
-0
+1
 1
 -1000
 
