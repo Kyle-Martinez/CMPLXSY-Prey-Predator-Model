@@ -2,6 +2,9 @@ turtles-own [
   energy
   repro-ctd
 ]
+patches-own[
+  regrowth-countdown
+]
 
 breed [buffaloes buffalo]
 breed [hyenas hyena]
@@ -17,7 +20,7 @@ to setup
     set label energy
     set label-color black
     setxy random-xcor random-ycor
-    set repro-ctd 24
+    set repro-ctd 0
   ]
   create-hyenas initial-number-hyena [
     set shape  "wolf"
@@ -26,11 +29,9 @@ to setup
     set energy random (2 * hyena-gain-from-food)
     set label energy
     setxy random-xcor random-ycor
-    set repro-ctd 1
+    set repro-ctd 0
   ]
-  ask patches [
-    set pcolor brown
-  ]
+  setup-grass
   reset-ticks
 end
 
@@ -39,7 +40,7 @@ to go
   if ticks >= 500 [stop]
   ask buffaloes [
     move
-    ; eat-grass
+    eat-grass
     starvation
     set label energy
     reproduce-buffalo
@@ -53,6 +54,7 @@ to go
     set label-color white
     reproduce-hyena
   ]
+  update-grass
   tick
 end
 
@@ -60,6 +62,51 @@ to move
   ifelse coin-flip? [right random 50] [left random 50]
   forward 1
   set energy energy - 1
+end
+
+to setup-grass
+  ask n-of (count patches / 2) patches
+  [
+    set regrowth-countdown grass-regrowth-time
+  ]
+  ask patches with [not member? self (patches with [regrowth-countdown = grass-regrowth-time])]
+  [
+    set regrowth-countdown random grass-regrowth-time
+  ]
+  ask patches [
+    ifelse regrowth-countdown < 50
+    [
+      set pcolor brown
+    ]
+    [
+      set pcolor green
+    ]
+  ]
+end
+
+to update-grass
+  ask patches
+  [
+    if regrowth-countdown < 50
+    [
+      set regrowth-countdown regrowth-countdown + 1
+    ]
+    ifelse regrowth-countdown < 50
+    [
+      set pcolor brown
+    ]
+    [
+      set pcolor green
+    ]
+  ]
+end
+
+to eat-grass ;temporary eat-grass function. replace when needed. used regrowth countdown instead of pcolor in checking
+  if regrowth-countdown = grass-regrowth-time
+  [
+    set energy energy + buffalo-gain-from-food
+    set regrowth-countdown 0
+  ]
 end
 
 to eat-buffalo
@@ -78,13 +125,17 @@ to starvation
   if energy = 0 [die]
 end
 
+to-report grass-count
+  report count patches with [regrowth-countdown = grass-regrowth-time]
+end
+
 to reproduce-hyena
   let hyena-repro-cd 16
   if any? other hyenas in-radius 1 != 0 ;check if other hyena in radius
   [
     if energy > 10 [
       if repro-ctd >= hyena-repro-cd and random 100 < 40 [ ;interval/cooldown & chance to reproduce
-        hatch 2 [ set repro-ctd 16 ]
+        hatch 2 [ set repro-ctd 0 ]
       set repro-ctd 0
       set energy energy - 10]
     ]
@@ -97,8 +148,8 @@ to reproduce-buffalo
   if any? other buffaloes in-radius 1 != 0 ;check if other buffalo in radius
   [
     if energy > 10 [
-      if repro-ctd >= buff-repro-cd and random 100 < 50[ ;interval/cooldown & chance to reproduce
-        hatch 1 [ set repro-ctd 24 ]
+      if repro-ctd >= buff-repro-cd [ ;interval/cooldown & chance to reproduce
+        hatch 1 [ set repro-ctd 0 ]
       set repro-ctd 0
       set energy energy - 10]
     ]
@@ -177,7 +228,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-6.0
+0.0
 1
 1
 NIL
@@ -261,7 +312,7 @@ buffalo-gain-from-food
 buffalo-gain-from-food
 0
 100
-49.0
+10.0
 1
 1
 NIL
@@ -276,7 +327,7 @@ buffalo-reporduce
 buffalo-reporduce
 0
 100
-50.0
+1.0
 1
 1
 NIL
@@ -306,7 +357,7 @@ hyena-reproduce
 hyena-reproduce
 0
 100
-49.0
+0.0
 1
 1
 NIL
@@ -319,15 +370,15 @@ SWITCH
 405
 show-energy?
 show-energy?
-1
+0
 1
 -1000
 
 MONITOR
-75
-445
-175
-490
+19
+443
+119
+488
 NIL
 count buffaloes
 17
@@ -335,10 +386,10 @@ count buffaloes
 11
 
 MONITOR
-222
-445
-310
-490
+130
+443
+218
+488
 NIL
 count hyenas
 17
@@ -361,6 +412,17 @@ NIL
 NIL
 NIL
 1
+
+MONITOR
+232
+443
+388
+488
+count grass
+grass-count
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?

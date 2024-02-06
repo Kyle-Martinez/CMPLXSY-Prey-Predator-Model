@@ -2,6 +2,9 @@ turtles-own [
   energy
   repro-ctd
 ]
+patches-own[
+  regrowth-countdown
+]
 
 breed [buffaloes buffalo]
 breed [hyenas hyena]
@@ -28,9 +31,7 @@ to setup
     setxy random-xcor random-ycor
     set repro-ctd 0
   ]
-  ask patches [
-    set pcolor brown
-  ]
+  setup-grass
   reset-ticks
 end
 
@@ -39,7 +40,7 @@ to go
   if ticks >= 500 [stop]
   ask buffaloes [
     move
-    ; eat-grass
+    eat-grass
     starvation
     set label energy
     reproduce-buffalo
@@ -53,6 +54,7 @@ to go
     set label-color white
     reproduce-hyena
   ]
+  update-grass
   tick
 end
 
@@ -60,6 +62,51 @@ to move
   ifelse coin-flip? [right random 50] [left random 50]
   forward 1
   set energy energy - 1
+end
+
+to setup-grass
+  ask n-of (count patches / 2) patches
+  [
+    set regrowth-countdown grass-regrowth-time
+  ]
+  ask patches with [not member? self (patches with [regrowth-countdown = grass-regrowth-time])]
+  [
+    set regrowth-countdown random grass-regrowth-time
+  ]
+  ask patches [
+    ifelse regrowth-countdown < grass-regrowth-time
+    [
+      set pcolor brown
+    ]
+    [
+      set pcolor green
+    ]
+  ]
+end
+
+to update-grass
+  ask patches
+  [
+    if regrowth-countdown < grass-regrowth-time
+    [
+      set regrowth-countdown regrowth-countdown + 1
+    ]
+    ifelse regrowth-countdown < grass-regrowth-time
+    [
+      set pcolor brown
+    ]
+    [
+      set pcolor green
+    ]
+  ]
+end
+
+to eat-grass ;temporary eat-grass function. replace when needed. used regrowth countdown instead of pcolor in checking if patch can be eaten
+  if regrowth-countdown = grass-regrowth-time
+  [
+    set energy energy + buffalo-gain-from-food
+    set regrowth-countdown 0
+  ]
 end
 
 to eat-buffalo
@@ -76,6 +123,10 @@ end
 
 to starvation
   if energy = 0 [die]
+end
+
+to-report grass-count
+  report count patches with [regrowth-countdown = grass-regrowth-time]
 end
 
 to reproduce-hyena
@@ -162,7 +213,7 @@ initial-number-buffalo
 initial-number-buffalo
 0
 1000
-101.0
+302.0
 1
 1
 NIL
@@ -177,7 +228,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-6.0
+25.0
 1
 1
 NIL
@@ -192,7 +243,7 @@ grass-regrowth-time
 grass-regrowth-time
 0
 100
-50.0
+10.0
 1
 1
 NIL
@@ -261,7 +312,7 @@ buffalo-gain-from-food
 buffalo-gain-from-food
 0
 100
-49.0
+50.0
 1
 1
 NIL
@@ -291,7 +342,7 @@ hyena-gain-from-food
 hyena-gain-from-food
 0
 100
-48.0
+50.0
 1
 1
 NIL
@@ -306,7 +357,7 @@ hyena-reproduce
 hyena-reproduce
 0
 100
-49.0
+50.0
 1
 1
 NIL
@@ -324,10 +375,10 @@ show-energy?
 -1000
 
 MONITOR
-75
-445
-175
-490
+19
+443
+119
+488
 NIL
 count buffaloes
 17
@@ -335,10 +386,10 @@ count buffaloes
 11
 
 MONITOR
-222
-445
-310
-490
+130
+443
+218
+488
 NIL
 count hyenas
 17
@@ -361,6 +412,17 @@ NIL
 NIL
 NIL
 1
+
+MONITOR
+232
+443
+388
+488
+count grass
+grass-count
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
