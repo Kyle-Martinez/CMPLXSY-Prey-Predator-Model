@@ -1,3 +1,7 @@
+globals [
+  max-energy
+]
+
 turtles-own [
   energy
   repro-ctd
@@ -12,6 +16,7 @@ breed [hyenas hyena]
 to setup
   clear-all
   reset-ticks
+  set max-energy max-energy-per-agent
   create-buffaloes initial-number-buffalo [
     set shape  "cow"
     set color white
@@ -112,22 +117,25 @@ to set-patch-color
 end
 
 to eat-grass
-  if regrowth-countdown = grass-regrowth-time
+  if regrowth-countdown = grass-regrowth-time and energy < max-energy-per-agent * .8
   [
-    set energy energy + buffalo-gain-from-food
+    set energy min(list (energy + buffalo-gain-from-food) max-energy)
     set regrowth-countdown 0
   ]
 end
 
 to eat-buffalo
   let prey one-of buffaloes-here
-  if prey != nobody [
+  if prey != nobody and energy < max-energy-per-agent * .8 [
     ask prey [die]
-    set energy energy + hyena-gain-from-food
+    set energy min(list (energy + hyena-gain-from-food) max-energy)
   ]
 end
 
 to-report grass-detection? ;
+  if energy >= max-energy-per-agent * .8 [
+    report false
+  ]
   let target min-one-of patches with [pcolor = green][distance myself]
   if target != nobody [
     face target
@@ -137,6 +145,9 @@ to-report grass-detection? ;
 end
 
 to-report hyena-hunt? ; smell variation
+  if energy >= max-energy-per-agent * .8 [
+    report false
+  ]
   let target one-of buffaloes in-radius hunting-range
   if target != nobody [
     face target
@@ -236,7 +247,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-0.0
+1.0
 1
 1
 NIL
@@ -293,9 +304,9 @@ NIL
 
 TEXTBOX
 36
-249
+222
 186
-267
+240
 Buffalo Settings
 11
 0.0
@@ -303,9 +314,9 @@ Buffalo Settings
 
 TEXTBOX
 256
-247
+220
 406
-265
+238
 Hyena Settings
 11
 0.0
@@ -313,9 +324,9 @@ Hyena Settings
 
 SLIDER
 11
-272
+245
 188
-305
+278
 buffalo-gain-from-food
 buffalo-gain-from-food
 0
@@ -328,9 +339,9 @@ HORIZONTAL
 
 SLIDER
 237
-272
+245
 409
-305
+278
 hyena-gain-from-food
 hyena-gain-from-food
 0
@@ -413,14 +424,29 @@ PENS
 
 SLIDER
 236
-316
+289
 408
-349
+322
 hunting-range
 hunting-range
 0
 10
 10.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+107
+338
+291
+371
+max-energy-per-agent
+max-energy-per-agent
+0
+1000
+100.0
 1
 1
 NIL
