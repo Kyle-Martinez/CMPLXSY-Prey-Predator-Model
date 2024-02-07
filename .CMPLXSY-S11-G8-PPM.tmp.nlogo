@@ -37,11 +37,11 @@ end
 
 to go
   if not any? turtles [stop]
-  if not any? buffaloes [stop]
+  ;if not any? buffaloes [stop]
   if not any? hyenas [stop]
   if ticks >= 500 [stop]
   ask buffaloes [
-    move
+    move-buffalo
     eat-grass
     starvation
     set label energy
@@ -49,7 +49,7 @@ to go
     set label-color black
   ]
   ask hyenas [
-    move
+    move-hyena
     eat-buffalo
     starvation
     set label energy
@@ -60,8 +60,16 @@ to go
   tick
 end
 
-to move
+to move-hyena
   ifelse hyena-hunt? [forward 1][
+    ifelse coin-flip? [right random 50] [left random 50]
+    forward 1
+  ]
+  set energy energy - 1
+end
+
+to move-buffalo
+  ifelse grass-detection? [forward 1][
     ifelse coin-flip? [right random 50] [left random 50]
     forward 1
   ]
@@ -103,7 +111,7 @@ to set-patch-color
   ]
 end
 
-to eat-grass ;temporary eat-grass function. replace when needed. used regrowth countdown instead of pcolor in checking if patch can be eaten
+to eat-grass
   if regrowth-countdown = grass-regrowth-time
   [
     set energy energy + buffalo-gain-from-food
@@ -117,6 +125,15 @@ to eat-buffalo
     ask prey [die]
     set energy energy + hyena-gain-from-food
   ]
+end
+
+to-report grass-detection? ;
+  let target min-one-of patches with [pcolor = green][distance myself]
+  if target != nobody [
+    face target
+    report true
+  ]
+  report false
 end
 
 to-report hyena-hunt? ; smell variation
@@ -204,7 +221,7 @@ initial-number-buffalo
 initial-number-buffalo
 0
 1000
-500.0
+6.0
 1
 1
 NIL
@@ -219,7 +236,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-500.0
+0.0
 1
 1
 NIL
@@ -285,10 +302,10 @@ Buffalo Settings
 1
 
 TEXTBOX
+256
 247
-249
-397
-267
+406
+265
 Hyena Settings
 11
 0.0
@@ -310,25 +327,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-13
-312
-185
-345
-buffalo-reporduce
-buffalo-reporduce
-0
-100
-50.0
-1
-1
-%
-HORIZONTAL
-
-SLIDER
-228
-274
-400
-307
+237
+272
+409
+305
 hyena-gain-from-food
 hyena-gain-from-food
 0
@@ -337,21 +339,6 @@ hyena-gain-from-food
 1
 1
 NIL
-HORIZONTAL
-
-SLIDER
-229
-318
-401
-351
-hyena-reproduce
-hyena-reproduce
-0
-100
-50.0
-1
-1
-%
 HORIZONTAL
 
 MONITOR
@@ -425,15 +412,15 @@ PENS
 "grass" 1.0 0 -10899396 true "" "plot grass-count"
 
 SLIDER
-1983
-423
-2155
-456
+236
+316
+408
+349
 hunting-range
 hunting-range
 0
 10
-2.0
+10.0
 1
 1
 NIL
