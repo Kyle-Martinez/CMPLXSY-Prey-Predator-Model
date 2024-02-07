@@ -37,6 +37,8 @@ end
 
 to go
   if not any? turtles [stop]
+  if not any? buffaloes [stop]
+  if not any? hyenas [stop]
   if ticks >= 500 [stop]
   ask buffaloes [
     move
@@ -59,8 +61,10 @@ to go
 end
 
 to move
-  ifelse coin-flip? [right random 50] [left random 50]
-  forward 1
+  ifelse hyena-hunt? [forward 1][
+    ifelse coin-flip? [right random 50] [left random 50]
+    forward 1
+  ]
   set energy energy - 1
 end
 
@@ -115,6 +119,15 @@ to eat-buffalo
   ]
 end
 
+to-report hyena-hunt? ; smell variation
+  let target one-of buffaloes in-radius hunting-range
+  if target != nobody [
+    face target
+    report true
+  ]
+  report false
+end
+
 to-report coin-flip?
   report random 2 = 0
 end
@@ -154,26 +167,6 @@ to reproduce-buffalo
   ]
   set repro-ctd repro-ctd + 1
 end
-
-; If ever we will do some packs or something with the hyenas,
-; this will divide the energy gained from the buffalo to all hyenas in the patch
-
-;to eat-buffalo
-;  ; Find a buffalo on the same patch as this hyena
-;  let prey one-of buffaloes-here
-;  if prey != nobody [
-;    ; Count the number of hyenas on the same patch
-;    let num-hyenas count hyenas-here
-;    ; Calculate the energy share for each hyena
-;    let energy-share hyena-gain-from-food / num-hyenas
-;    ; Distribute the energy to each hyena on the patch
-;    ask hyenas-here [
-;      set energy energy + energy-share
-;    ]
-;    ; Remove the buffalo from the simulation
-;    ask prey [ die ]
-;  ]
-;end
 @#$#@#$#@
 GRAPHICS-WINDOW
 459
@@ -189,15 +182,15 @@ GRAPHICS-WINDOW
 1
 1
 0
-0
-0
+1
+1
 1
 -16
 16
 -16
 16
-1
-1
+0
+0
 1
 ticks
 30.0
@@ -211,7 +204,7 @@ initial-number-buffalo
 initial-number-buffalo
 0
 1000
-302.0
+500.0
 1
 1
 NIL
@@ -226,7 +219,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-25.0
+500.0
 1
 1
 NIL
@@ -292,10 +285,10 @@ Buffalo Settings
 1
 
 TEXTBOX
-247
-249
-397
 267
+219
+417
+237
 Hyena Settings
 11
 0.0
@@ -310,7 +303,7 @@ buffalo-gain-from-food
 buffalo-gain-from-food
 0
 100
-50.0
+20.0
 1
 1
 NIL
@@ -328,29 +321,29 @@ buffalo-reporduce
 50.0
 1
 1
-NIL
+%
 HORIZONTAL
 
 SLIDER
-228
-274
-400
-307
+248
+244
+420
+277
 hyena-gain-from-food
 hyena-gain-from-food
 0
 100
-50.0
+10.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-229
-318
-401
-351
+249
+288
+421
+321
 hyena-reproduce
 hyena-reproduce
 0
@@ -358,37 +351,26 @@ hyena-reproduce
 50.0
 1
 1
-NIL
+%
 HORIZONTAL
-
-SWITCH
-139
-372
-273
-405
-show-energy?
-show-energy?
-1
-1
--1000
 
 MONITOR
-19
-443
-119
-488
-NIL
+24
+388
+124
+433
+buffaloes
 count buffaloes
 17
 1
 11
 
 MONITOR
-130
-443
-218
-488
-NIL
+135
+388
+223
+433
+hyenas
 count hyenas
 17
 1
@@ -412,15 +394,50 @@ NIL
 1
 
 MONITOR
-232
-443
+237
 388
-488
-count grass
+393
+433
+grass
 grass-count
 17
 1
 11
+
+PLOT
+19
+457
+411
+699
+population
+time
+pop.
+0.0
+100.0
+0.0
+100.0
+true
+true
+"" ""
+PENS
+"buffaloes" 1.0 0 -6459832 true "" "plot count buffaloes"
+"hyenas" 1.0 0 -7500403 true "" "plot count hyenas"
+"grass" 1.0 0 -10899396 true "" "plot grass-count"
+
+SLIDER
+249
+337
+421
+370
+hunting-range
+hunting-range
+0
+10
+10.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
