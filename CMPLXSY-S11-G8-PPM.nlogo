@@ -66,7 +66,13 @@ to go
 end
 
 to move-hyena
-  ifelse hyena-hunt? [forward 1][
+  ifelse agent-detection [
+    ifelse hyena-hunt? [forward 1][
+      ifelse coin-flip? [right random 50] [left random 50]
+      forward 1
+    ]
+  ]
+  [
     ifelse coin-flip? [right random 50] [left random 50]
     forward 1
   ]
@@ -74,10 +80,21 @@ to move-hyena
 end
 
 to move-buffalo
-  ifelse grass-detection? [forward 1][
-    ifelse coin-flip? [right random 50] [left random 50]
-    forward 1
+  let predators hyenas in-radius predator-detection
+  ifelse any? predators and agent-detection [
+    let closest-predator min-one-of predators [distance myself]
+    let angle-towards-predator towards closest-predator
+    let escape-heading (angle-towards-predator + 180) mod 360
+    set heading escape-heading
+    if can-move? 1 [ forward 1 ]
   ]
+  [
+    ifelse grass-detection? [forward 1][
+      ifelse coin-flip? [right random 50] [left random 50]
+      forward 1
+    ]
+  ]
+
   set energy energy - 1
 end
 
@@ -161,7 +178,7 @@ to-report coin-flip?
 end
 
 to starvation
-  if energy = 0 [die]
+  if energy <= 0 [die]
 end
 
 to-report grass-count
@@ -199,8 +216,8 @@ end
 GRAPHICS-WINDOW
 459
 43
-1194
-779
+2692
+2277
 -1
 -1
 22.03030303030303
@@ -213,10 +230,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-50
+50
+-50
+50
 0
 0
 1
@@ -232,7 +249,7 @@ initial-number-buffalo
 initial-number-buffalo
 0
 1000
-6.0
+1000.0
 1
 1
 NIL
@@ -247,7 +264,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-0.0
+1000.0
 1
 1
 NIL
@@ -303,30 +320,30 @@ NIL
 1
 
 TEXTBOX
-36
-222
-186
-240
+42
+286
+192
+304
 Buffalo Settings
 11
 0.0
 1
 
 TEXTBOX
-256
-220
-406
-238
+262
+284
+412
+302
 Hyena Settings
 11
 0.0
 1
 
 SLIDER
-11
-245
-188
-278
+17
+309
+194
+342
 buffalo-gain-from-food
 buffalo-gain-from-food
 0
@@ -338,10 +355,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-237
-245
-409
-278
+243
+309
+415
+342
 hyena-gain-from-food
 hyena-gain-from-food
 0
@@ -353,10 +370,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-24
-388
-124
-433
+34
+467
+134
+512
 buffaloes
 count buffaloes
 17
@@ -364,10 +381,10 @@ count buffaloes
 11
 
 MONITOR
-135
-388
-223
-433
+145
+467
+233
+512
 hyenas
 count hyenas
 17
@@ -392,10 +409,10 @@ NIL
 1
 
 MONITOR
-237
-388
-393
-433
+247
+467
+403
+512
 grass
 grass-count
 17
@@ -403,10 +420,10 @@ grass-count
 11
 
 PLOT
-19
-457
-411
-699
+29
+536
+421
+778
 population
 time
 pop.
@@ -423,25 +440,25 @@ PENS
 "grass" 1.0 0 -10899396 true "" "plot grass-count"
 
 SLIDER
-236
-289
-408
-322
+238
+400
+410
+433
 hunting-range
 hunting-range
 0
 10
-0.0
+10.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-107
-338
-291
-371
+118
+236
+290
+269
 max-energy-per-agent
 max-energy-per-agent
 0
@@ -451,6 +468,32 @@ max-energy-per-agent
 1
 NIL
 HORIZONTAL
+
+SLIDER
+17
+401
+189
+434
+predator-detection
+predator-detection
+0
+10
+10.0
+1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+139
+357
+283
+390
+agent-detection
+agent-detection
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
