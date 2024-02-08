@@ -282,7 +282,7 @@ grass-regrowth-time
 grass-regrowth-time
 0
 100
-99.0
+100.0
 1
 1
 NIL
@@ -351,7 +351,7 @@ buffalo-gain-from-food
 buffalo-gain-from-food
 0
 100
-20.0
+30.0
 1
 1
 NIL
@@ -366,7 +366,7 @@ hyena-gain-from-food
 hyena-gain-from-food
 0
 100
-19.0
+30.0
 1
 1
 NIL
@@ -440,7 +440,7 @@ true
 PENS
 "buffaloes" 1.0 0 -6459832 true "" "plot count buffaloes"
 "hyenas" 1.0 0 -7500403 true "" "plot count hyenas"
-"grass" 1.0 0 -10899396 true "" "plot grass-count"
+"grass" 1.0 0 -10899396 true "" "let num grass-count / 4\n\nplot num"
 
 SLIDER
 247
@@ -451,7 +451,7 @@ hunting-range
 hunting-range
 0
 10
-5.0
+0.0
 1
 1
 NIL
@@ -466,7 +466,7 @@ max-energy-per-agent
 max-energy-per-agent
 0
 1000
-50.0
+328.0
 1
 1
 NIL
@@ -505,7 +505,7 @@ SWITCH
 203
 limit-ticks
 limit-ticks
-1
+0
 1
 -1000
 
@@ -518,7 +518,7 @@ hyena-reproduction-cooldown
 hyena-reproduction-cooldown
 0
 1000
-16.0
+100.0
 1
 1
 NIL
@@ -548,7 +548,7 @@ buffalo-reproduction-cooldown
 buffalo-reproduction-cooldown
 0
 1000
-133.0
+100.0
 1
 1
 NIL
