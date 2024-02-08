@@ -21,20 +21,20 @@ to setup
     set shape  "cow"
     set color white
     set size 1 ; easier to see
-    set energy random (2 * buffalo-gain-from-food)
+    set energy max-energy-per-agent
     set label energy
     set label-color black
     setxy random-xcor random-ycor
-    set repro-ctd 0
+    set repro-ctd random buffalo-reproduction-cooldown
   ]
   create-hyenas initial-number-hyena [
     set shape  "wolf"
     set color black
     set size 1; easier to see
-    set energy random (2 * hyena-gain-from-food)
+    set energy max-energy-per-agent / 2
     set label energy
     setxy random-xcor random-ycor
-    set repro-ctd 0
+    set repro-ctd random hyena-reproduction-cooldown
   ]
   setup-grass
   reset-ticks
@@ -146,7 +146,7 @@ end
 
 to eat-buffalo
   let prey one-of buffaloes-here
-  if prey != nobody and energy < max-energy-per-agent * .8 [
+  if prey != nobody and energy < ((max-energy-per-agent / 2) * .8) [
     ask prey [die]
     set energy min(list (energy + hyena-gain-from-food) max-energy)
   ]
@@ -194,9 +194,10 @@ to reproduce-hyena
   [
     if energy > hyena-reproduction-cost [ ; default 10
       if repro-ctd >= hyena-reproduction-cooldown and random 100 < 40 [ ;interval/cooldown & chance to reproduce
-        hatch 2 [ set repro-ctd 0 ]
+        hatch 2
+        [ set repro-ctd 0 ]
       set repro-ctd 0
-      set energy energy - 10]
+      set energy energy - hyena-reproduction-cost]
     ]
   ]
   set repro-ctd repro-ctd + 1
@@ -210,7 +211,7 @@ to reproduce-buffalo
       if repro-ctd >= buffalo-reproduction-cooldown [ ;interval/cooldown & chance to reproduce
         hatch 1 [ set repro-ctd 0 ]
       set repro-ctd 0
-      set energy energy - 10]
+      set energy energy - buffalo-reproduction-cost]
     ]
   ]
   set repro-ctd repro-ctd + 1
@@ -373,10 +374,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-43
-565
-143
-610
+150
+567
+250
+612
 buffaloes
 count buffaloes
 17
@@ -384,10 +385,10 @@ count buffaloes
 11
 
 MONITOR
-154
-565
-242
-610
+38
+566
+126
+611
 hyenas
 count hyenas
 17
@@ -412,10 +413,10 @@ NIL
 1
 
 MONITOR
-256
-565
-412
-610
+274
+567
+430
+612
 grass
 grass-count
 17
@@ -465,8 +466,8 @@ SLIDER
 max-energy-per-agent
 max-energy-per-agent
 0
-1000
-328.0
+100
+100.0
 1
 1
 NIL
@@ -517,8 +518,8 @@ SLIDER
 hyena-reproduction-cooldown
 hyena-reproduction-cooldown
 0
-1000
-100.0
+50
+15.0
 1
 1
 NIL
@@ -532,7 +533,7 @@ SLIDER
 hyena-reproduction-cost
 hyena-reproduction-cost
 0
-100
+50
 10.0
 1
 1
@@ -547,8 +548,8 @@ SLIDER
 buffalo-reproduction-cooldown
 buffalo-reproduction-cooldown
 0
-1000
-100.0
+50
+0.0
 1
 1
 NIL
@@ -562,7 +563,7 @@ SLIDER
 buffalo-reproduction-cost
 buffalo-reproduction-cost
 0
-100
+50
 10.0
 1
 1
