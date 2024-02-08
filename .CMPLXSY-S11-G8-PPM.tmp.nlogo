@@ -189,11 +189,11 @@ to-report grass-count
 end
 
 to reproduce-hyena
-  let hyena-repro-cd 80 ;16
+  ;let hyena-repro-cd 80 ;16
   if any? other hyenas in-radius 1 != 0 ;check if other hyena in radius
   [
-    if energy > 10 [
-      if repro-ctd >= hyena-repro-cd and random 100 < 40 [ ;interval/cooldown & chance to reproduce
+    if energy > hyena-reproduction-cost [ ; default 10
+      if repro-ctd >= hyena-reproduction-cooldown and random 100 < 40 [ ;interval/cooldown & chance to reproduce
         hatch 2 [ set repro-ctd 0 ]
       set repro-ctd 0
       set energy energy - 10]
@@ -203,11 +203,11 @@ to reproduce-hyena
 end
 
 to reproduce-buffalo
-  let buff-repro-cd 120;24
+  ;let buff-repro-cd 120 ;24
   if any? other buffaloes in-radius 1 != 0 ;check if other buffalo in radius
   [
-    if energy > 10 [
-      if repro-ctd >= buff-repro-cd [ ;interval/cooldown & chance to reproduce
+    if energy > buffalo-reproduction-cost [ ; default 10
+      if repro-ctd >= buffalo-reproduction-cooldown [ ;interval/cooldown & chance to reproduce
         hatch 1 [ set repro-ctd 0 ]
       set repro-ctd 0
       set energy energy - 10]
@@ -219,8 +219,8 @@ end
 GRAPHICS-WINDOW
 459
 43
-1592
-1178
+1590
+1175
 -1
 -1
 22.03030303030303
@@ -373,10 +373,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-34
-467
-134
-512
+35
+622
+135
+667
 buffaloes
 count buffaloes
 17
@@ -384,10 +384,10 @@ count buffaloes
 11
 
 MONITOR
-145
-467
-233
-512
+146
+622
+234
+667
 hyenas
 count hyenas
 17
@@ -412,10 +412,10 @@ NIL
 1
 
 MONITOR
-247
-467
-403
-512
+248
+622
+404
+667
 grass
 grass-count
 17
@@ -423,10 +423,10 @@ grass-count
 11
 
 PLOT
-29
-536
-421
-778
+30
+690
+422
+932
 population
 time
 pop.
@@ -443,10 +443,10 @@ PENS
 "grass" 1.0 0 -10899396 true "" "plot grass-count"
 
 SLIDER
-238
-400
-410
-433
+239
+554
+411
+587
 hunting-range
 hunting-range
 0
@@ -473,10 +473,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-17
-401
-189
-434
+18
+555
+190
+588
 predator-detection
 predator-detection
 0
@@ -488,10 +488,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-139
-357
-283
-390
+140
+512
+284
+545
 agent-detection
 agent-detection
 1
@@ -508,6 +508,66 @@ limit-ticks
 1
 1
 -1000
+
+SLIDER
+236
+353
+454
+386
+hyena-reproduction-cooldown
+hyena-reproduction-cooldown
+0
+1000
+16.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+255
+394
+443
+427
+hyena-reproduction-cost
+hyena-reproduction-cost
+0
+100
+10.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+4
+352
+227
+385
+buffalo-reproduction-cooldown
+buffalo-reproduction-cooldown
+0
+1000
+133.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+22
+395
+215
+428
+buffalo-reproduction-cost
+buffalo-reproduction-cost
+0
+100
+10.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
