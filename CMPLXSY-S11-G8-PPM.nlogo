@@ -44,7 +44,10 @@ to go
   if not any? turtles [stop]
   if not any? buffaloes [stop]
   if not any? hyenas [stop]
-  if ticks >= 500 [stop]
+  if limit-ticks
+  [
+    if ticks >= 500 [stop]
+  ]
   ask buffaloes [
     move-buffalo
     eat-grass
@@ -186,7 +189,7 @@ to-report grass-count
 end
 
 to reproduce-hyena
-  let hyena-repro-cd 16
+  let hyena-repro-cd 80 ;16
   if any? other hyenas in-radius 1 != 0 ;check if other hyena in radius
   [
     if energy > 10 [
@@ -200,7 +203,7 @@ to reproduce-hyena
 end
 
 to reproduce-buffalo
-  let buff-repro-cd 24
+  let buff-repro-cd 120 ;24
   if any? other buffaloes in-radius 1 != 0 ;check if other buffalo in radius
   [
     if energy > 10 [
@@ -216,8 +219,8 @@ end
 GRAPHICS-WINDOW
 459
 43
-2692
-2277
+1592
+1178
 -1
 -1
 22.03030303030303
@@ -230,10 +233,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--50
-50
--50
-50
+-25
+25
+-25
+25
 0
 0
 1
@@ -249,7 +252,7 @@ initial-number-buffalo
 initial-number-buffalo
 0
 1000
-1000.0
+100.0
 1
 1
 NIL
@@ -264,7 +267,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-1000.0
+100.0
 1
 1
 NIL
@@ -279,7 +282,7 @@ grass-regrowth-time
 grass-regrowth-time
 0
 100
-10.0
+99.0
 1
 1
 NIL
@@ -363,7 +366,7 @@ hyena-gain-from-food
 hyena-gain-from-food
 0
 100
-10.0
+19.0
 1
 1
 NIL
@@ -448,7 +451,7 @@ hunting-range
 hunting-range
 0
 10
-10.0
+5.0
 1
 1
 NIL
@@ -463,7 +466,7 @@ max-energy-per-agent
 max-energy-per-agent
 0
 1000
-100.0
+50.0
 1
 1
 NIL
@@ -478,7 +481,7 @@ predator-detection
 predator-detection
 0
 10
-10.0
+5.0
 1
 1
 NIL
@@ -491,7 +494,18 @@ SWITCH
 390
 agent-detection
 agent-detection
-0
+1
+1
+-1000
+
+SWITCH
+296
+170
+428
+203
+limit-ticks
+limit-ticks
+1
 1
 -1000
 

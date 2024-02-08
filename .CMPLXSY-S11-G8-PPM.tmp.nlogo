@@ -44,7 +44,10 @@ to go
   if not any? turtles [stop]
   if not any? buffaloes [stop]
   if not any? hyenas [stop]
-  if ticks >= 500 [stop]
+  if limit-ticks
+  [
+    if ticks >= 500 [stop]
+  ]
   ask buffaloes [
     move-buffalo
     eat-grass
@@ -186,7 +189,7 @@ to-report grass-count
 end
 
 to reproduce-hyena
-  let hyena-repro-cd 16
+  let hyena-repro-cd 80 ;16
   if any? other hyenas in-radius 1 != 0 ;check if other hyena in radius
   [
     if energy > 10 [
@@ -200,7 +203,7 @@ to reproduce-hyena
 end
 
 to reproduce-buffalo
-  let buff-repro-cd 24
+  let buff-repro-cd 120;24
   if any? other buffaloes in-radius 1 != 0 ;check if other buffalo in radius
   [
     if energy > 10 [
@@ -216,8 +219,8 @@ end
 GRAPHICS-WINDOW
 459
 43
-2692
-2277
+1592
+1178
 -1
 -1
 22.03030303030303
@@ -230,10 +233,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--50
-50
--50
-50
+-25
+25
+-25
+25
 0
 0
 1
@@ -249,7 +252,7 @@ initial-number-buffalo
 initial-number-buffalo
 0
 1000
-1000.0
+100.0
 1
 1
 NIL
@@ -264,7 +267,7 @@ initial-number-hyena
 initial-number-hyena
 0
 1000
-1000.0
+100.0
 1
 1
 NIL
@@ -279,7 +282,7 @@ grass-regrowth-time
 grass-regrowth-time
 0
 100
-10.0
+99.0
 1
 1
 NIL
@@ -320,30 +323,30 @@ NIL
 1
 
 TEXTBOX
-36
-222
-186
-240
+42
+286
+192
+304
 Buffalo Settings
 11
 0.0
 1
 
 TEXTBOX
-256
-220
-406
-238
+262
+284
+412
+302
 Hyena Settings
 11
 0.0
 1
 
 SLIDER
-11
-245
-188
-278
+17
+309
+194
+342
 buffalo-gain-from-food
 buffalo-gain-from-food
 0
@@ -355,25 +358,25 @@ NIL
 HORIZONTAL
 
 SLIDER
-237
-245
-409
-278
+243
+309
+415
+342
 hyena-gain-from-food
 hyena-gain-from-food
 0
 100
-10.0
+19.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-27
-605
-127
-650
+34
+467
+134
+512
 buffaloes
 count buffaloes
 17
@@ -381,10 +384,10 @@ count buffaloes
 11
 
 MONITOR
-138
-605
-226
-650
+145
+467
+233
+512
 hyenas
 count hyenas
 17
@@ -409,10 +412,10 @@ NIL
 1
 
 MONITOR
-240
-605
-396
-650
+247
+467
+403
+512
 grass
 grass-count
 17
@@ -420,10 +423,10 @@ grass-count
 11
 
 PLOT
-22
-674
-414
-916
+29
+536
+421
+778
 population
 time
 pop.
@@ -440,58 +443,69 @@ PENS
 "grass" 1.0 0 -10899396 true "" "plot grass-count"
 
 SLIDER
-232
-440
-404
-473
+238
+400
+410
+433
 hunting-range
 hunting-range
 0
 10
-10.0
+5.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-103
-489
-275
-522
+118
+236
+290
+269
 max-energy-per-agent
 max-energy-per-agent
 0
 1000
-100.0
+50.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-11
-441
-183
-474
+17
+401
+189
+434
 predator-detection
 predator-detection
 0
 10
-10.0
+5.0
 1
 1
 NIL
 HORIZONTAL
 
 SWITCH
-116
-548
-260
-581
+139
+357
+283
+390
 agent-detection
 agent-detection
-0
+1
+1
+-1000
+
+SWITCH
+296
+170
+428
+203
+limit-ticks
+limit-ticks
+1
 1
 -1000
 
